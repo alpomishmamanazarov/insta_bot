@@ -158,5 +158,25 @@ videos_list = ["video1.mp4", "video2.mp4", "video3.mp4"]
 
 # --- 7. Async ishga tushirish ---
 asyncio.run(upload_multiple_videos(videos_list))
+import threading
+import os
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+# Render portini ushlab turish uchun funksiya
+def keep_alive():
+    class SimpleHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Bot is alive!")
+
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
+    server.serve_forever()
+
+# Botni yurgizishdan oldin ushbu qatorni qo'shing
+threading.Thread(target=keep_alive, daemon=True).start()
+
+# SHUNDAN KEYIN kodingizdagi botni yurgizish qismi kelishi kerak (masalan: app.run_polling())
 
 
